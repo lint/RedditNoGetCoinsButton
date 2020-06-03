@@ -97,7 +97,33 @@ static BOOL isGildingButtonHidden;
 
 %end
 
-%hook CoinSaleEntryContainer
+%hook RedditCoinSaleEntryContainer
+
+- (void)showSaleBadge:(BOOL) arg1{
+	if (!isSearchCoinButtonHidden){
+		%orig;
+	}
+}
+
+- (id)coinSaleButton{
+	return isSearchCoinButtonHidden ? nil : %orig;
+}
+
+- (id)init{
+	return isSearchCoinButtonHidden ? nil : %orig;
+}
+
+- (id)initWithFrame:(CGRect) arg1{
+	return isSearchCoinButtonHidden ? nil : %orig;
+}
+
++ (CGFloat)coinIconSize{
+	return isSearchCoinButtonHidden ? 0 : %orig;
+}
+
+%end
+
+%hook EconomyCoinSaleEntryContainer
 
 - (void)showSaleBadge:(BOOL) arg1{
 	if (!isSearchCoinButtonHidden){
@@ -243,6 +269,6 @@ static void loadPrefs(){
 	loadPrefs();
 	
 	if (isEnabled){
-		%init(RoundedHighlightView = objc_getClass("Reddit.RoundedHighlightView"), AwardedCommentHighlightNode = objc_getClass("_TtCC6Reddit27AwardedCommentHighlightNode13HighlightView"), CoinSaleEntryContainer = objc_getClass("Reddit.CoinSaleEntryContainer"));
+		%init(RoundedHighlightView = objc_getClass("Reddit.RoundedHighlightView"), AwardedCommentHighlightNode = objc_getClass("_TtCC6Reddit27AwardedCommentHighlightNode13HighlightView"), RedditCoinSaleEntryContainer = objc_getClass("Reddit.CoinSaleEntryContainer"), EconomyCoinSaleEntryContainer = objc_getClass("Economy.CoinSaleEntryContainer"));
 	}
 }
