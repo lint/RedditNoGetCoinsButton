@@ -20,20 +20,20 @@ static BOOL isGildingButtonHidden;
 %hook UserDrawerViewController
 
 - (id)tableView:(id)arg1 cellForRowAtIndexPath:(id)arg2{
-	
+
 	if (arg1 == [self actionsTableView]){
-		
+
 		id cell = %orig;
 		NSString *cellText = [cell detailTextLabel].text;
-		
+
 		if (isUserDrawerPremiumHidden){
 			if ([cellText isEqualToString:NSLocalizedString(@"userDrawer.menu.premiumSubTitle",nil)] || [cellText isEqualToString:NSLocalizedString(@"userDrawer.menu.coinsSubTitle",nil)]){
 				[cell detailTextLabel].text = nil;
 			}
 		}
-		
+
 		return cell;
-		
+
 	} else {
 		return %orig;
 	}
@@ -41,14 +41,14 @@ static BOOL isGildingButtonHidden;
 
 - (NSMutableArray *)availableUserActions{
 	NSMutableArray *orig = %orig;
-	
+
 	if (isUserDrawerPremiumHidden){
 		[orig removeObject:@6];
 		[orig removeObject:@7];
 	}
-	
+
 	return orig;
-} 
+}
 
 %end
 
@@ -143,6 +143,10 @@ static BOOL isGildingButtonHidden;
 	return isSearchCoinButtonHidden ? nil : %orig;
 }
 
+- (id)initWithAction:(id)arg1 {
+	return isSearchCoinButtonHidden ? nil : %orig;
+}
+
 + (CGFloat)coinIconSize{
 	return isSearchCoinButtonHidden ? 0 : %orig;
 }
@@ -169,7 +173,7 @@ static BOOL isGildingButtonHidden;
 
 - (void)layoutSubviews{
 	%orig;
-	
+
 	if (isCommentHighlightHidden){
 		[self setHidden:YES];
 	}
@@ -222,52 +226,52 @@ static BOOL isGildingButtonHidden;
 
 static void loadPrefs(){
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/User/Library/Preferences/com.lint.stopitwiththecoins.prefs.plist"];
-	
+
 	if (prefs){
-		
+
 		if ([prefs objectForKey:@"isEnabled"] != nil){
 			isEnabled = [[prefs objectForKey:@"isEnabled"] boolValue];
 		} else {
 			isEnabled = YES;
 		}
-		
+
 		if ([prefs objectForKey:@"isCommentHighlightHidden"] != nil){
 			isCommentHighlightHidden = [[prefs objectForKey:@"isCommentHighlightHidden"] boolValue];
 		} else {
 			isCommentHighlightHidden = YES;
 		}
-		
+
 		if ([prefs objectForKey:@"isSearchCoinButtonHidden"] != nil){
 			isSearchCoinButtonHidden = [[prefs objectForKey:@"isSearchCoinButtonHidden"] boolValue];
 		} else {
 			isSearchCoinButtonHidden = YES;
 		}
-		
+
 		if ([prefs objectForKey:@"isUserDrawerPremiumHidden"] != nil){
 			isUserDrawerPremiumHidden = [[prefs objectForKey:@"isUserDrawerPremiumHidden"] boolValue];
 		} else {
 			isUserDrawerPremiumHidden = YES;
 		}
-		
+
 		if ([prefs objectForKey:@"isGildingButtonHidden"] != nil){
 			isGildingButtonHidden = [[prefs objectForKey:@"isGildingButtonHidden"] boolValue];
 		} else {
 			isGildingButtonHidden = YES;
 		}
-		
+
 	} else {
 		isEnabled = YES;
 		isCommentHighlightHidden = YES;
 		isSearchCoinButtonHidden = YES;
 		isUserDrawerPremiumHidden = YES;
 		isGildingButtonHidden = YES;
-	}	
+	}
 }
 
 
 %ctor{
 	loadPrefs();
-	
+
 	if (isEnabled){
 		%init(RoundedHighlightView = objc_getClass("Reddit.RoundedHighlightView"), AwardedCommentHighlightNode = objc_getClass("_TtCC6Reddit27AwardedCommentHighlightNode13HighlightView"), RedditCoinSaleEntryContainer = objc_getClass("Reddit.CoinSaleEntryContainer"), EconomyCoinSaleEntryContainer = objc_getClass("Economy.CoinSaleEntryContainer"));
 	}
